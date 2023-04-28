@@ -7,7 +7,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers" />
+    <Folder Include="obj\Debug\net6.0\ref" />
+    <Folder Include="obj\Debug\net6.0\refint" />
+    <Folder Include="obj\Debug\net6.0\staticwebassets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="obj\AgentService.csproj.nuget.dgspec.json" />
+    <Content Include="obj\AgentService.csproj.nuget.g.props" />
+    <Content Include="obj\AgentService.csproj.nuget.g.targets" />
+    <Content Include="obj\Debug\net6.0\AgentService.AssemblyInfoInputs.cache" />
+    <Content Include="obj\Debug\net6.0\AgentService.assets.cache" />
+    <Content Include="obj\Debug\net6.0\AgentService.csproj.AssemblyReference.cache" />
+    <Content Include="obj\Debug\net6.0\AgentService.GeneratedMSBuildEditorConfig.editorconfig" />
+    <Content Include="obj\project.assets.json" />
+    <Content Include="obj\project.nuget.cache" />
+    <Content Include="obj\project.packagespec.json" />
+    <Content Include="obj\rider.project.restore.info" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net6.0\AgentService.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\net6.0\AgentService.GlobalUsings.g.cs" />
   </ItemGroup>
 
 </Project>

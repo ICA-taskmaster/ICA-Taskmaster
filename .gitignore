@@ -95,7 +95,9 @@ BenchmarkDotNet.Artifacts/
 ### DotnetCore ###
 # .NET Core build folders
 bin/
-obj/
+/EquipmentService/obj/
+/AgentService/obj/
+/MissionService/obj/
 
 # Common node modules locations
 /node_modules
