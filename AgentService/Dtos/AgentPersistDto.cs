@@ -2,11 +2,11 @@
 
 namespace AgentService.Dtos;
 
-public class AgentPersistDto {
+public record AgentPersistDto {
     [Required]
-    public string realName { get; set; }
+    public string RealName { get; init; }
     [Required]
-    public string codeName { get; set; }
-    public string burnerPhone { get; set; }
-    public string securityClearance { get; set; }
+    public string CodeName { get; init; }
+    public string BurnerPhone { get; init; }
+    public string SecurityClearance { get; init; }
 }

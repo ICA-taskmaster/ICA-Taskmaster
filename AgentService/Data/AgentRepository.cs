@@ -11,7 +11,7 @@ public class AgentRepository : IAgentRepository {
 
     public IEnumerable<Agent> getAll() => context.agents.ToList();
     
-    public Agent getById(ulong id) => context.agents.FirstOrDefault(agent => agent.id == id) ?? throw new InvalidOperationException();
+    public Agent getById(ulong id) => context.agents.FirstOrDefault(agent => agent.id == id)!;
     
     public Agent delete(ulong id) {
         var agent = getById(id);
