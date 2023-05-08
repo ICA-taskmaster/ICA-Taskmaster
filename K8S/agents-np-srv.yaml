@@ -1,0 +1,12 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: agents-np-srv
+spec:
+  type: NodePort
+  selector:
+    app: agentservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

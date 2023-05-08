@@ -1,0 +1,17 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agents-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agentservice
+  template:
+    metadata:
+      labels:
+        app: agentservice
+    spec:
+      containers:
+        - name: agentservice
+          image: extiriority/agentservice:latest
