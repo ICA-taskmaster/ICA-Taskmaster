@@ -2,7 +2,6 @@
 
 namespace AgentService.SyncDataServices.Http;
 
-public interface IEquipmentDataClient
-{
-    Task SendAgentsToEquipmentService(IEnumerable<AgentFetchDto> agents);
+public interface IEquipmentDataClient {
+    Task sendAgentsToEquipmentService(AgentFetchDto agents);
 }

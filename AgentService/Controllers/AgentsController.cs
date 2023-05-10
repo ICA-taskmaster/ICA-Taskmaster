@@ -1,6 +1,7 @@
 ﻿using AgentService.Data;
 using AgentService.Dtos;
 using AgentService.Models;
+using AgentService.SyncDataServices.Http;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,20 @@ namespace AgentService.Controllers;
 public class AgentsController : ControllerBase {
     private readonly IAgentRepository repository;
     private readonly IMapper mapper;
+    private readonly IEquipmentDataClient equipmentDataClient;
 
-    public AgentsController(IAgentRepository repository, IMapper mapper) =>
-        (this.repository, this.mapper) = (repository, mapper);
+    public AgentsController(
+        IAgentRepository repository, IMapper mapper, IEquipmentDataClient equipmentDataClient
+        ) => (
+        this.repository, this.mapper, this.equipmentDataClient
+        ) = (
+            repository, mapper, equipmentDataClient
+        );
     
     // GET api/agents
     [HttpGet]
     public ActionResult<IEnumerable<AgentFetchDto>> getAllAgents() {
-        Console.WriteLine("Getting Agents...");
+        Console.WriteLine("--> Getting Agents...");
         var agents = repository.getAll();
         return Ok(mapper.Map<IEnumerable<AgentFetchDto>>(agents));
     }
@@ -26,7 +33,7 @@ public class AgentsController : ControllerBase {
     // GET api/agents/{id}
     [HttpGet("{id}", Name = "GetAgentById")]
     public ActionResult<AgentFetchDto> getAgentById(ulong id) {
-        Console.WriteLine("Getting Agent by id...");
+        Console.WriteLine("--> Getting Agent by id...");
         var agent = repository.getById(id);
         
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -38,13 +45,21 @@ public class AgentsController : ControllerBase {
     
     // POST api/agents
     [HttpPost]
-    public ActionResult<AgentFetchDto> createAgent(AgentPersistDto agentPersistDto) {
+    public async Task<ActionResult<AgentFetchDto>> createAgent(AgentPersistDto agentPersistDto) {
         Console.WriteLine("Creating Agent...");
         var agent = mapper.Map<Agent>(agentPersistDto);
         repository.create(agent);
         repository.saveChanges();
         
         var agentFetchDto = mapper.Map<AgentFetchDto>(agent);
+        
+        try {
+            await equipmentDataClient.sendAgentsToEquipmentService(agentFetchDto);
+        }
+        catch(Exception ex) {
+            Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+        }
+        
         return CreatedAtRoute(nameof(getAgentById), new { agentFetchDto.id }, agentFetchDto);
     }
 }

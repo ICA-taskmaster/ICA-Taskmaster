@@ -1,4 +1,5 @@
 using AgentService.Data;
+using AgentService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseInMemoryDatabase("InMem"));
 
+builder.Services.AddHttpClient<IEquipmentDataClient, HttpEquipmentDataClient>();
+
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -14,6 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+
+Console.WriteLine($"--> Equipment Service Endpoint: {builder.Configuration["EquipmentService:Url"]}/api/c/agents/");
 
 var app = builder.Build();
 
