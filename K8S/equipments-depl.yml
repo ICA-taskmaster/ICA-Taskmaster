@@ -1,32 +1,32 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: agents-depl
+  name: equipments-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: agentservice
+      app: equipmentservice
   template:
     metadata:
       labels:
-        app: agentservice
+        app: equipmentservice
     spec:
       containers:
-        - name: agentservice
-          image: extiriority/agentservice:latest
+        - name: equipmentservice
+          image: extiriority/equipmentservice:latest
 ---
-# Path: K8S\agents-clusterip.yml
+# Path: K8S\equipmentsku-clusterip.yml
 apiVersion: v1
 kind: Service
 metadata:
-  name: agents-clusterip-srv
+  name: equipments-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: agentservice
+    app: equipmentservice
   ports:
-  - name: agentservice
+  - name: equipmentservice
     protocol: TCP
     port: 80
     targetPort: 80

@@ -46,7 +46,7 @@ public class AgentsController : ControllerBase {
     // POST api/agents
     [HttpPost]
     public async Task<ActionResult<AgentFetchDto>> createAgent(AgentPersistDto agentPersistDto) {
-        Console.WriteLine("Creating Agent...");
+        Console.WriteLine("--> Creating Agent...");
         var agent = mapper.Map<Agent>(agentPersistDto);
         repository.create(agent);
         repository.saveChanges();
