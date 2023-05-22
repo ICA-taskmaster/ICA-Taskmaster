@@ -5,7 +5,7 @@ namespace AgentService.Models;
 public class Agent {
     [Key]
     [Required]
-    public ulong id { get; set; }
+    public int id { get; set; }
     [Required]
     public string realName { get; set; }
     [Required]

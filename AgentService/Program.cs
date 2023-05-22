@@ -5,8 +5,15 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseInMemoryDatabase("InMem"));
+if (builder.Environment.IsProduction()) {
+    Console.WriteLine("--> In Production");
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseNpgsql(builder.Configuration.GetConnectionString("AgentsConnection")));
+} else {
+    Console.WriteLine("--> In Development");
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseInMemoryDatabase("InMem"));
+}
 
 builder.Services.AddHttpClient<IEquipmentDataClient, HttpEquipmentDataClient>();
 
@@ -34,6 +41,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-PrepDb.prepPopulation(app);
+PrepDb.prepPopulation(app, app.Environment.IsProduction());
 
 app.Run();

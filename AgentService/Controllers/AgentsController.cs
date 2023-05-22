@@ -32,7 +32,7 @@ public class AgentsController : ControllerBase {
     
     // GET api/agents/{id}
     [HttpGet("{id}", Name = "GetAgentById")]
-    public ActionResult<AgentFetchDto> getAgentById(ulong id) {
+    public ActionResult<AgentFetchDto> getAgentById(int id) {
         Console.WriteLine("--> Getting Agent by id...");
         var agent = repository.getById(id);
         

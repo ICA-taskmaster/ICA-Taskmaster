@@ -11,9 +11,9 @@ public class AgentRepository : IAgentRepository {
 
     public IEnumerable<Agent> getAll() => context.agents.ToList();
     
-    public Agent getById(ulong id) => context.agents.FirstOrDefault(agent => agent.id == id)!;
+    public Agent getById(int id) => context.agents.FirstOrDefault(agent => agent.id == id)!;
     
-    public Agent delete(ulong id) {
+    public Agent delete(int id) {
         var agent = getById(id);
         context.agents.Remove(agent);
         return agent;

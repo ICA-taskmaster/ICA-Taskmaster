@@ -1,7 +1,7 @@
 ﻿namespace AgentService.Dtos;
 
 public record AgentFetchDto(
-    ulong id,
+    int id,
     string realName,
     string codeName,
     string burnerPhone,

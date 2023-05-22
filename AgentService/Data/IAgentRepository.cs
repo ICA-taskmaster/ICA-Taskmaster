@@ -6,7 +6,7 @@ public interface IAgentRepository {
     bool saveChanges();
 
     IEnumerable<Agent> getAll();
-    Agent getById(ulong id);
-    Agent delete(ulong id);
+    Agent getById(int id);
+    Agent delete(int id);
     Agent create(Agent agent);
 }
