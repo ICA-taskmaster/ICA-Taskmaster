@@ -11,7 +11,8 @@ public class AgentRepository : IAgentRepository {
 
     public IEnumerable<Agent> getAll() => context.agents.ToList();
     
-    public Agent getById(int id) => context.agents.FirstOrDefault(agent => agent.id == id)!;
+    public Agent getById(int id) 
+        => context.agents.FirstOrDefault(agent => agent.id == id)!;
     
     public Agent delete(int id) {
         var agent = getById(id);
@@ -27,5 +28,6 @@ public class AgentRepository : IAgentRepository {
         return agent;
     }
     
-    public bool saveChanges() => context.SaveChanges() >= 0;
+    public bool saveChanges() 
+        => context.SaveChanges() >= 0;
 }
