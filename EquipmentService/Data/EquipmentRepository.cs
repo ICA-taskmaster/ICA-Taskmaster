@@ -25,19 +25,21 @@ public class EquipmentRepository : IEquipmentRespository
         => context.agents.Any(agent => agent.id == id);
 
     public Equipment getById(int agentId, int equipmentId)
-    {
-        throw new NotImplementedException();
-    }
+        => context.equipments
+            .FirstOrDefault(equipment => equipment.agentId == agentId && equipment.id == equipmentId);
 
     public IEnumerable<Equipment> getEquipmentsForAgent(int agentId) 
         => context.equipments
             .Where(equipment => equipment.agentId == agentId)
             .OrderBy(equipment => equipment.agent.name);
     
-
-    public Equipment create(int agentId, Equipment equipment)
-    {
-        throw new NotImplementedException();
+    public Equipment create(int agentId, Equipment equipment) {
+        if (equipment == null) 
+            throw new ArgumentNullException(nameof(equipment));
+        
+        equipment.agentId = agentId;
+        context.equipments.Add(equipment);
+        return equipment;
     }
 
     public Equipment delete(int id) {
