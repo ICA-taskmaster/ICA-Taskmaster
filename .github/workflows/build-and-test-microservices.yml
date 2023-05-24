@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build microservices
+
+on:
+  push:
+    branches: [ "master, dev" ]
+  pull_request:
+    branches: [ "master", "dev" ]
+
+jobs:
+  build:
+    name: Build Services
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Restore & build Agent Service
+      run: |
+        cd ./AgentService
+        dotnet restore
+        dotnet build --no-restore
+      
+    - name: Restore & build Equipment Service
+      run: |
+        cd ./EquipmentService
+        dotnet restore
+        dotnet build --no-restore
+        
+    - name: Restore & build Mission Service
+      run: |
+        cd ./MissionService
+        dotnet restore
+        dotnet build --no-restore
