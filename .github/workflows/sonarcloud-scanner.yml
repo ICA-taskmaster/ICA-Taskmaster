@@ -52,3 +52,4 @@ jobs:
           dotnet build AgentService/AgentService.csproj
           dotnet build EquipmentService/EquipmentService.csproj
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        
