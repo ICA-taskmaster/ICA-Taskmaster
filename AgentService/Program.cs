@@ -1,3 +1,4 @@
+using AgentService.AsyncDataServices;
 using AgentService.Data;
 using AgentService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ if (builder.Environment.IsProduction()) {
 }
 
 builder.Services.AddHttpClient<IEquipmentDataClient, HttpEquipmentDataClient>();
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

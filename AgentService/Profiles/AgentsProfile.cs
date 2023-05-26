@@ -9,5 +9,6 @@ public class AgentsProfile : Profile {
         // Source -> Target
         CreateMap<Agent, AgentFetchDto>();
         CreateMap<AgentPersistDto, Agent>();
+        CreateMap<AgentFetchDto, AgentPublishDto>();
     }
 }
