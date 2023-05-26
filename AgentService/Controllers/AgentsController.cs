@@ -1,4 +1,5 @@
-﻿using AgentService.Data;
+﻿using AgentService.AsyncDataServices;
+using AgentService.Data;
 using AgentService.Dtos;
 using AgentService.Models;
 using AgentService.SyncDataServices.Http;
@@ -13,13 +14,14 @@ public class AgentsController : ControllerBase {
     private readonly IAgentRepository repository;
     private readonly IMapper mapper;
     private readonly IEquipmentDataClient equipmentDataClient;
+    private IMessageBusClient messageBusClient;
 
     public AgentsController(
-        IAgentRepository repository, IMapper mapper, IEquipmentDataClient equipmentDataClient
+        IAgentRepository repository, IMapper mapper, IEquipmentDataClient equipmentDataClient, IMessageBusClient messageBusClient
         ) => (
-        this.repository, this.mapper, this.equipmentDataClient
+        this.repository, this.mapper, this.equipmentDataClient, this.messageBusClient
         ) = (
-            repository, mapper, equipmentDataClient
+            repository, mapper, equipmentDataClient, messageBusClient
         );
     
     // GET api/agents
@@ -49,15 +51,25 @@ public class AgentsController : ControllerBase {
         Console.WriteLine("--> Creating Agent...");
         var agent = mapper.Map<Agent>(agentPersistDto);
         repository.create(agent);
+        
         repository.saveChanges();
         
         var agentFetchDto = mapper.Map<AgentFetchDto>(agent);
         
+        // Send Sync Message
         try {
             await equipmentDataClient.sendAgentsToEquipmentService(agentFetchDto);
+        } catch(Exception e) {
+            Console.WriteLine($"--> Could not send synchronously: {e.Message}");
         }
-        catch(Exception ex) {
-            Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+        
+        // Send Async Message
+        try {
+            var agentPublishDto = mapper.Map<AgentPublishDto>(agentFetchDto);
+            agentPublishDto.eventMq = "Agent_Published";
+            messageBusClient.publishNewAgent(agentPublishDto);
+        } catch(Exception e) {
+            Console.WriteLine($"--> Could not send asynchronously: {e.Message}");
         }
         
         return CreatedAtRoute(nameof(getAgentById), new { agentFetchDto.id }, agentFetchDto);
