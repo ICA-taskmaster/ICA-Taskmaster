@@ -10,5 +10,9 @@ public class AgentsProfile : Profile {
         CreateMap<Agent, AgentFetchDto>();
         CreateMap<AgentPersistDto, Agent>();
         CreateMap<AgentFetchDto, AgentPublishDto>();
+        CreateMap<Agent, GrpcAgentModel>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+            .ForMember(dest => dest.CodeName, opt => opt.MapFrom(src => src.codeName))
+            .ForMember(dest => dest.SecurityClearance, opt => opt.MapFrom(src => src.securityClearance));
     }
 }
