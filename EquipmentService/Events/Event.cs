@@ -20,16 +20,15 @@ public class Event : IEvent {
             case EventType.AgentPublished:
                 handleAgentPublished(message);
                 break;
-            case EventType.Undetermined:
             default:
                 Console.WriteLine($"--> Event type {eventType} not handled");
                 break;
         }
     }
 
-    private EventType determineEvent(string message) {
+    private static EventType determineEvent(string message) {
         Console.WriteLine("--> Determining event");
-        var dto = JsonSerializer.Deserialize<genericEventDto>(message);
+        var dto = JsonSerializer.Deserialize<GenericEventDto>(message);
         return dto.eventType switch {
             "AgentPublished" => EventType.AgentPublished,
             _ => EventType.Undetermined
