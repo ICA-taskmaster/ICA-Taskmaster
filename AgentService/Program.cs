@@ -1,6 +1,5 @@
 using AgentService.AsyncDataServices;
 using AgentService.Data;
-using AgentService.SyncDataServices.Grpc;
 using AgentService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +18,6 @@ if (builder.Environment.IsProduction()) {
 
 builder.Services.AddHttpClient<IEquipmentDataClient, HttpEquipmentDataClient>();
 builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
-builder.Services.AddGrpc();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -44,10 +42,6 @@ if (app.Environment.IsDevelopment()) {
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGrpcService<GrpcAgentService>();
-app.MapGet("/protos/agents.proto", async context => {
-    await context.Response.WriteAsync(File.ReadAllText("Protos/agents.proto"));
-});
 
 PrepDb.prepPopulation(app, app.Environment.IsProduction());
 
