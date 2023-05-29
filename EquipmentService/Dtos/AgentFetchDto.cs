@@ -1,7 +1,7 @@
 ﻿namespace EquipmentService.Dtos;
 
-public record AgentFetchDto(
-    int id,
-    string codeName,
-    string securityClearance
-);
+public class AgentFetchDto {
+    public int id { get; set; }
+    public string codeName { get; set; }
+    public string securityClearance { get; set; }
+}

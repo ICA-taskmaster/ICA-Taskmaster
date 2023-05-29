@@ -1,3 +1,4 @@
+using EquipmentService.AsyncDataServices;
 using EquipmentService.Data;
 using EquipmentService.Events;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("InMem"));
 
 builder.Services.AddScoped<IEquipmentRespository, EquipmentRepository>();
-builder.Services.AddScoped<IEvent, Event>();
+builder.Services.AddSingleton<IEvent, Event>();
+builder.Services.AddHostedService<MessageBusSubscriber>();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -12,6 +12,5 @@ public class EquipmentsProfile : Profile {
         CreateMap<EquipmentPersistDto, Equipment>();
         CreateMap<AgentPublishedDto, Agent>()
             .ForMember(dest => dest.externalId, opt => opt.MapFrom(src => src.id));
-
     }
 }

@@ -29,8 +29,9 @@ public class Event : IEvent {
     private static EventType determineEvent(string message) {
         Console.WriteLine("--> Determining event");
         var dto = JsonSerializer.Deserialize<GenericEventDto>(message);
-        return dto.eventType switch {
-            "AgentPublished" => EventType.AgentPublished,
+        Console.WriteLine($"--> Event type: {dto.eventMq}");
+        return dto.eventMq switch {
+            "Agent_Published" => EventType.AgentPublished,
             _ => EventType.Undetermined
         };
     }
@@ -47,6 +48,7 @@ public class Event : IEvent {
             if (!repository.externalAgentExists(agent.externalId)) {
                 repository.create(agent);
                 repository.saveChanges();
+                Console.WriteLine($"--> Agent with externalId [{agent.externalId}] created.");
             } else {
                 Console.WriteLine($"--> Agent with externalId [{agent.externalId}] already exists");
             }
