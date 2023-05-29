@@ -9,6 +9,6 @@ public class Agent {
     [Required]
     public int externalId { get; set; }
     [Required]
-    public string name { get; set; }
+    public string codeName { get; set; }
     public ICollection<Equipment> equipments { get; set; } = new List<Equipment>();
 }
