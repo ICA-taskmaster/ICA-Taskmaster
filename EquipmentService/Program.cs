@@ -1,4 +1,5 @@
 using EquipmentService.Data;
+using EquipmentService.Events;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("InMem"));
 
 builder.Services.AddScoped<IEquipmentRespository, EquipmentRepository>();
+builder.Services.AddScoped<IEvent, Event>();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

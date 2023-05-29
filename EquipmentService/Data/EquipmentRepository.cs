@@ -24,6 +24,9 @@ public class EquipmentRepository : IEquipmentRespository
     public bool agentExists(int id) 
         => context.agents.Any(agent => agent.id == id);
 
+    public bool externalAgentExists(int externalId)
+        => context.agents.Any(agent => agent.externalId == externalId);
+
     public Equipment getById(int agentId, int equipmentId)
         => context.equipments
             .FirstOrDefault(equipment => equipment.agentId == agentId && equipment.id == equipmentId);
@@ -31,7 +34,7 @@ public class EquipmentRepository : IEquipmentRespository
     public IEnumerable<Equipment> getEquipmentsForAgent(int agentId) 
         => context.equipments
             .Where(equipment => equipment.agentId == agentId)
-            .OrderBy(equipment => equipment.agent.name);
+            .OrderBy(equipment => equipment.agent.codeName);
     
     public Equipment create(int agentId, Equipment equipment) {
         if (equipment == null) 

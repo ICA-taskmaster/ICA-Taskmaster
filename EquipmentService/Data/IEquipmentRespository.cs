@@ -9,6 +9,7 @@ public interface IEquipmentRespository {
     IEnumerable<Agent> getAll();
     Agent create(Agent agent);
     bool agentExists(int id);
+    bool externalAgentExists(int externalId);
     
     //Equipments
     Equipment getById(int agentId, int equipmentId);
