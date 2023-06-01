@@ -1,0 +1,67 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  AgentServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: AgentService/
+      Handler: AgentService::AgentService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetAllAgentsApi:
+          Type: Api
+          Properties:
+            Path: /api/Agents
+            Method: post
+        GetAgentByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/Agents/{id}
+            Method: get
+
+  EquipmentServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: EquipmentService/
+      Handler: EquipmentService::EquipmentService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetEquipmentsByAgentIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments
+            Method: get
+        GetEquipmentByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments/{equipmentId}
+            Method: get
+        CreateEquipmentApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments
+            Method: post
+
+  MissionServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: MissionService/
+      Handler: MissionService::MissionService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetMissionsByAgentIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/missions
+            Method: get
+        GetMissionByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/missions/{missionId}
+            Method: get
+
+Outputs:
+  ApiEndpoint:
+    Description: API endpoint URL for the microservices
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
