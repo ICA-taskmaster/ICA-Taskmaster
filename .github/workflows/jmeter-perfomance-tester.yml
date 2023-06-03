@@ -22,7 +22,6 @@ jobs:
       - name: Start RabbitMQ
         run: |
           docker run -d --name rabbitmq -p 5672:5672 rabbitmq:latest
-
       - name: Restore & build Agent Service
         run: |
           cd ./AgentService
@@ -33,24 +32,30 @@ jobs:
           cd ./EquipmentService
           dotnet restore
           dotnet build --no-restore
-
-      - name: Start Microservices
+      - name: Start Services
         run: |
           cd ./AgentService
           dotnet run --no-build &
           cd ../EquipmentService
           dotnet run --no-build  &
+        
         # Add sleep to allow services to start
         # Adjust the sleep duration as per your service startup time    
       - name: Sleep for Service Startup
         run: |
           sleep 30s
-
+  
+  jmeter-test:
+    runs-on: ubuntu-latest
+    needs: build
+    name: JMeter Test Execution
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Run JMeter Tests
         uses: QAInsights/PerfAction@v3.1
         with:
           test-plan-path: './Performance-Test.jmx'
-          
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v2
         with:
