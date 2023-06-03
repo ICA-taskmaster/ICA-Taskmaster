@@ -36,7 +36,17 @@ jobs:
         run: |
           cd ./AgentService
           dotnet run --no-build &
-          sleep 30s
+          sleep 5s
           cd ../EquipmentService
           dotnet run --no-build  &
-          sleep 30s
+          sleep 5s
+      - name: Run JMeter Tests
+        uses: QAInsights/PerfAction@v3.1
+        with:
+          test-plan-path: './Performance-Test.jmx'
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-results
+          path: result.jtl
+          if-no-files-found: warn
