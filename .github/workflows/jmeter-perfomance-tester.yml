@@ -38,3 +38,9 @@ jobs:
           dotnet run --no-build &
           cd ../EquipmentService
           dotnet run --no-build  &
+        
+        # Add sleep to allow services to start
+        # Adjust the sleep duration as per your service startup time    
+      - name: Sleep for Service Startup
+        run: |
+          sleep 30s
