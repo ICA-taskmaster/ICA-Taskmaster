@@ -13,8 +13,22 @@ jobs:
     runs-on: ubuntu-latest 
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore & build Agent Service
+      run: |
+        cd ./AgentService
+        dotnet run --no-restore
+
+    - name: Restore & build Equipment Service
+      run: |
+        cd ./EquipmentService
+        dotnet run --no-restore
+        
     - name: PerfAction for JMeter
       # You may pin to the exact commit or the version.
       # uses: QAInsights/PerfAction@f3959d0a69e7f23949add25d7e34a3ae167d6443
