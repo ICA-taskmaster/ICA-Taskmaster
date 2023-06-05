@@ -26,12 +26,12 @@ spec:
                 name: postgresql
                 key: POSTGRES_PASSWORD
           volumeMounts:
-          - mountPath: /var/lib/postgresql/data
+          - mountPath: /var/lib/postgresql/data/pgdata
             name: postgresql-volume
       volumes:
       - name: postgresql-volume
         persistentVolumeClaim:
-          claimName: postgresql-claim
+          claimName: azure-managed-disk
 ---
 apiVersion: v1
 kind: Service

@@ -1,10 +1,11 @@
 ﻿apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgresql-claim
+  name: azure-managed-disk
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  storageClassName: managed-csi
   resources:
     requests:
-      storage: 1Gi
+      storage: 5Gi
