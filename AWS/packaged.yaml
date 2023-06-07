@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: ica-backend
+    Description: mission management system that provides a range of microservices
+      to ICA operators, such as mission planning, target tracking, communication,
+      and reporting.
+    Author: giang
+    SpdxLicenseId: GPL-3.0-only
+    LicenseUrl: s3://icabackend/d0506772598e027b7c3cc0d411d3cf5b
+    ReadmeUrl: s3://icabackend/f25e51212cebab19ebb333673d7de636
+    Labels:
+    - serverless
+    - microservices
+    - aws
+    - dotnet
+    HomePageUrl: https://github.com/ICA-taskmaster/ICA-Taskmaster
+    SemanticVersion: '0.0.2'
+    SourceCodeUrl: https://github.com/ICA-taskmaster/ICA-Taskmaster
+Resources:
+  AgentServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://icabackend/d647f5667bdfa801d9d4d9bf0a0618e1
+      Handler: AgentService::AgentService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetAllAgentsApi:
+          Type: Api
+          Properties:
+            Path: /api/Agents
+            Method: post
+        GetAgentByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/Agents/{id}
+            Method: get
+    Metadata:
+      SamResourceId: AgentServiceFunction
+  EquipmentServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://icabackend/dbff28d43546c03b81f3837e34702f1b
+      Handler: EquipmentService::EquipmentService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetEquipmentsByAgentIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments
+            Method: get
+        GetEquipmentByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments/{equipmentId}
+            Method: get
+        CreateEquipmentApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/equipments
+            Method: post
+    Metadata:
+      SamResourceId: EquipmentServiceFunction
+  MissionServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://icabackend/634d957b8082b9823a7445d958dc1f94
+      Handler: MissionService::MissionService.Function::FunctionHandler
+      Runtime: dotnet6.0
+      Events:
+        GetMissionsByAgentIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/missions
+            Method: get
+        GetMissionByIdApi:
+          Type: Api
+          Properties:
+            Path: /api/c/agents/{agentId}/missions/{missionId}
+            Method: get
+    Metadata:
+      SamResourceId: MissionServiceFunction
+Outputs:
+  ApiEndpoint:
+    Description: API endpoint URL for the microservices
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod
