@@ -10,20 +10,55 @@ jobs:
 
   build:
     name: Testing performance
-    runs-on: ubuntu-latest 
-
+    runs-on: ubuntu-latest
+    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: PerfAction for JMeter
-      # You may pin to the exact commit or the version.
-      # uses: QAInsights/PerfAction@f3959d0a69e7f23949add25d7e34a3ae167d6443
-      uses: QAInsights/PerfAction@v3.1
-      with:
-        # jmeter test plan to execute
-        test-plan-path: './Performance-Test.jmx'
-    - name: Upload Results
-      uses: actions/upload-artifact@v2
-      with:
-        name: jmeter-results
-        path: result.jtl
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Start RabbitMQ
+        run: |
+          docker run -d --name rabbitmq -p 5672:5672 rabbitmq:latest
+
+      - name: Restore & build Agent Service
+        run: |
+          cd ./AgentService
+          dotnet restore
+          dotnet build --no-restore
+
+      - name: Restore & build Equipment Service
+        run: |
+          cd ./EquipmentService
+          dotnet restore
+          dotnet build --no-restore
+
+      - name: Start Services
+        run: |
+          cd ./AgentService
+          dotnet run --no-build &
+          sleep 5s
+          cd ../EquipmentService
+          dotnet run --no-build  &
+          sleep 5s
+
+  jmeter-test:
+    name: Run JMeter Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run JMeter Tests
+        uses: QAInsights/PerfAction@v3.1
+        with:
+          test-plan-path: './Performance-Test.jmx'
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-results
+          path: result.jtl
+          if-no-files-found: warn

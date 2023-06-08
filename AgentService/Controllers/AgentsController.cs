@@ -14,64 +14,81 @@ public class AgentsController : ControllerBase {
     private readonly IAgentRepository repository;
     private readonly IMapper mapper;
     private readonly IEquipmentDataClient equipmentDataClient;
-    private IMessageBusClient messageBusClient;
+    private readonly IMessageBusClient messageBusClient;
+    private readonly ILogger<AgentsController> logger;
 
     public AgentsController(
-        IAgentRepository repository, IMapper mapper, IEquipmentDataClient equipmentDataClient, IMessageBusClient messageBusClient
-        ) => (
-        this.repository, this.mapper, this.equipmentDataClient, this.messageBusClient
-        ) = (
-            repository, mapper, equipmentDataClient, messageBusClient
-        );
+        IAgentRepository repository, IMapper mapper, IEquipmentDataClient equipmentDataClient, IMessageBusClient messageBusClient, ILogger<AgentsController> logger
+    ) => (
+        this.repository, this.mapper, this.equipmentDataClient, this.messageBusClient, this.logger
+    ) = (
+        repository, mapper, equipmentDataClient, messageBusClient, logger
+    );
     
     // GET api/agents
     [HttpGet]
     public ActionResult<IEnumerable<AgentFetchDto>> getAllAgents() {
-        Console.WriteLine("--> Getting Agents...");
+        logger.LogInformation("Getting all agents...");
+
         var agents = repository.getAll();
-        return Ok(mapper.Map<IEnumerable<AgentFetchDto>>(agents));
+        var agentFetchDtos = mapper.Map<IEnumerable<AgentFetchDto>>(agents);
+
+        logger.LogInformation("Retrieved {Count} agents", agentFetchDtos.Count());
+
+        return Ok(agentFetchDtos);
     }
-    
+
     // GET api/agents/{id}
     [HttpGet("{id}", Name = "GetAgentById")]
     public ActionResult<AgentFetchDto> getAgentById(int id) {
-        Console.WriteLine("--> Getting Agent by id...");
+        logger.LogInformation("Getting agent by ID: {Id}", id);
+
         var agent = repository.getById(id);
-        
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (agent != null) 
-            return Ok(mapper.Map<AgentFetchDto>(agent));
-        
+
+        if (agent != null) {
+            var agentFetchDto = mapper.Map<AgentFetchDto>(agent);
+            logger.LogInformation("Retrieved agent with ID {Id}", agentFetchDto.id);
+            return Ok(agentFetchDto);
+        }
+
+        logger.LogWarning("Agent with ID {Id} was not found", id);
+
         return NotFound();
     }
-    
+
     // POST api/agents
     [HttpPost]
     public async Task<ActionResult<AgentFetchDto>> createAgent(AgentPersistDto agentPersistDto) {
-        Console.WriteLine("--> Creating Agent...");
+        logger.LogInformation("Creating agent...");
+
         var agent = mapper.Map<Agent>(agentPersistDto);
         repository.create(agent);
-        
         repository.saveChanges();
-        
+
         var agentFetchDto = mapper.Map<AgentFetchDto>(agent);
-        
+
         // Send Sync Message
         try {
             await equipmentDataClient.sendAgentsToEquipmentService(agentFetchDto);
-        } catch(Exception e) {
-            Console.WriteLine($"--> Could not send synchronously: {e.Message}");
+            logger.LogInformation("Synchronously sent agent to equipment service");
         }
-        
+        catch (Exception e) {
+            logger.LogError(e, "Could not send agent synchronously: {ErrorMessage}", e.Message);
+        }
+
         // Send Async Message
         try {
             var agentPublishDto = mapper.Map<AgentPublishDto>(agentFetchDto);
             agentPublishDto.eventMq = "Agent_Published";
             messageBusClient.publishNewAgent(agentPublishDto);
-        } catch(Exception e) {
-            Console.WriteLine($"--> Could not send asynchronously: {e.Message}");
+            logger.LogInformation("Asynchronously sent agent to message bus");
         }
-        
+        catch (Exception e) {
+            logger.LogError(e, "Could not send agent asynchronously: {ErrorMessage}", e.Message);
+        }
+
+        logger.LogInformation("Created agent with ID {Id}", agentFetchDto.id);
+
         return CreatedAtRoute(nameof(getAgentById), new { agentFetchDto.id }, agentFetchDto);
     }
 }

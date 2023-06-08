@@ -2,19 +2,38 @@ using AgentService.AsyncDataServices;
 using AgentService.Data;
 using AgentService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+try {
+    Log.Information("Starting web host");
+} catch (Exception ex) {
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}finally {
+    Log.CloseAndFlush();
+}
 
 // Add services to the container.
 if (builder.Environment.IsProduction()) {
-    Console.WriteLine("--> In Production");
+    Log.Information("--> In Production");
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseNpgsql(builder.Configuration.GetConnectionString("AgentsConnection")));
 } else {
-    Console.WriteLine("--> In Development");
+    Log.Information("--> In Development");
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseInMemoryDatabase("InMem"));
 }
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddHttpClient<IEquipmentDataClient, HttpEquipmentDataClient>();
 builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
