@@ -6,18 +6,6 @@ using Serilog;
 using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-if (builder.Environment.IsProduction()) {
-    Console.WriteLine("--> In Production");
-    builder.Services.AddDbContext<AppDbContext>(opt =>
-        opt.UseNpgsql(builder.Configuration.GetConnectionString("AgentsConnection")));
-} else {
-    Console.WriteLine("--> In Development");
-    builder.Services.AddDbContext<AppDbContext>(opt =>
-        opt.UseInMemoryDatabase("InMem"));
-}
-
 var logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -31,6 +19,17 @@ try {
     Log.Fatal(ex, "Host terminated unexpectedly");
 }finally {
     Log.CloseAndFlush();
+}
+
+// Add services to the container.
+if (builder.Environment.IsProduction()) {
+    Log.Information("--> In Production");
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseNpgsql(builder.Configuration.GetConnectionString("AgentsConnection")));
+} else {
+    Log.Information("--> In Development");
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseInMemoryDatabase("InMem"));
 }
 
 builder.Logging.ClearProviders();
