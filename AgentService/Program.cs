@@ -14,20 +14,20 @@ var logger = new LoggerConfiguration()
     .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 try {
-    Log.Information("Starting web host");
+    logger.Information("Starting web host");
 } catch (Exception ex) {
-    Log.Fatal(ex, "Host terminated unexpectedly");
+    logger.Fatal(ex, "Host terminated unexpectedly");
 }finally {
     Log.CloseAndFlush();
 }
 
 // Add services to the container.
 if (builder.Environment.IsProduction()) {
-    Log.Information("--> In Production");
+    logger.Information("--> In Production");
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseNpgsql(builder.Configuration.GetConnectionString("AgentsConnection")));
 } else {
-    Log.Information("--> In Development");
+    logger.Information("--> In Development");
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseInMemoryDatabase("InMem"));
 }
@@ -46,7 +46,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 
-Console.WriteLine($"--> Equipment Service Endpoint: {builder.Configuration["EquipmentService:Url"]}/api/c/agents/");
+logger.Information("Equipment Service Endpoint: {EquipmentServiceUrl}/api/c/agents/", builder.Configuration["EquipmentService:Url"]);
 
 var app = builder.Build();
 
@@ -62,6 +62,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-PrepDb.prepPopulation(app, app.Environment.IsProduction());
+PrepDb.prepPopulation(app, app.Environment.IsProduction(), app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("PrepDb"));
 
 app.Run();

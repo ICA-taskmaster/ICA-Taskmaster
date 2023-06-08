@@ -67,7 +67,7 @@ public class Agent
         // Arrange
         var repository = new AgentRepository(context);
         var agent = new Models.Agent { realName = "Lucas Grey", codeName = "Grey", burnerPhone = "06336500395", securityClearance = "Purple" };
- 
+
         // Act
         repository.create(agent);
         repository.saveChanges();
