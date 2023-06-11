@@ -22,7 +22,6 @@ kind: Service
 metadata:
   name: equipments-clusterip-srv
 spec:
-  type: ClusterIP
   selector:
     app: equipmentservice
   ports:
