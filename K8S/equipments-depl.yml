@@ -3,29 +3,30 @@ kind: Deployment
 metadata:
   name: equipments-depl
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: equipmentservice
   template:
     metadata:
       labels:
+        environment: production
         app: equipmentservice
     spec:
       containers:
         - name: equipmentservice
           image: extiriority/equipmentservice:latest
+          ports:
+            - containerPort: 80
 ---
-# Path: K8S\equipmentsku-clusterip.yml
 apiVersion: v1
 kind: Service
 metadata:
-  name: equipments-clusterip-srv
+  name: equipments-api-srv
 spec:
   selector:
     app: equipmentservice
   ports:
-  - name: equipmentservice
-    protocol: TCP
+  - protocol: TCP
     port: 80
     targetPort: 80

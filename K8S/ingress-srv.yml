@@ -17,3 +17,10 @@ spec:
                 name: agents-api-srv
                 port:
                   number: 80
+          - path: /(api/c/agents/?.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: equipments-api-srv
+                port:
+                  number: 80
