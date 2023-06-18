@@ -47,7 +47,7 @@ public class EquipmentsController : ControllerBase {
     
     // POST api/c/agents/{agentId}/equipments
     [HttpPost]
-    public ActionResult<EquipmentFetchDto> createEquipmentForAgent(int agentId, EquipmentPersistDto equipmentPersistDto) {
+    public ActionResult<EquipmentFetchDto> createEquipmentForAgent(int agentId, [FromForm] EquipmentPersistDto equipmentPersistDto) {
         Console.WriteLine($"--> Creating equipment for agent id [{agentId}] from equipment service");
         
         if (!repository.agentExists(agentId))
@@ -55,13 +55,13 @@ public class EquipmentsController : ControllerBase {
 
         var equipment = mapper.Map<Equipment>(equipmentPersistDto);
 
-        if (equipmentPersistDto.image != null)
-        {
+        if (equipmentPersistDto.image != null) {
+            Console.WriteLine("--> Uploading image to Azure Blob Storage");
             string connectionString = configuration["ConnectionStrings:StorageConnection"];
-            const string containerName = "csb10032002ac44be8f";
-            string imageName = Guid.NewGuid().ToString(); // Generate a unique image name
+            string containerName = configuration["storageContainerName"];
+            string imageName = Guid.NewGuid().ToString(); 
             var imageUrl = uploadImageToAzure(equipmentPersistDto.image.OpenReadStream(), connectionString, containerName, imageName); // Declare the imageUrl variable
-        
+            
             equipment.imageUrl = imageUrl; // Set the image URL in the equipment object
         }
 

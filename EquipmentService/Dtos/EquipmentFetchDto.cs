@@ -5,5 +5,6 @@ public record EquipmentFetchDto(
     string item,
     string description,
     string status,
+    string imageUrl,
     int agentId
 );

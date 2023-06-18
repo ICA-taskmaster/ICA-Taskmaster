@@ -13,9 +13,8 @@ public class Equipment {
     [Required]
     public string status { get; set; }
     [Required]
-    public byte[] image { get; set; }
+    public string imageUrl { get; set; }
     [Required]
     public int agentId { get; set; }
-    
     public Agent agent { get; set; }
 } 
