@@ -60,9 +60,9 @@ public class EquipmentsController : ControllerBase {
             string connectionString = configuration["ConnectionStrings:StorageConnection"];
             string containerName = configuration["storageContainerName"];
             string imageName = Guid.NewGuid().ToString(); 
-            var imageUrl = uploadImageToAzure(equipmentPersistDto.image.OpenReadStream(), connectionString, containerName, imageName); // Declare the imageUrl variable
+            var imageUrl = uploadImageToAzure(equipmentPersistDto.image.OpenReadStream(), connectionString, containerName, imageName); 
             
-            equipment.imageUrl = imageUrl; // Set the image URL in the equipment object
+            equipment.imageUrl = imageUrl; 
         }
 
         repository.create(agentId, equipment);
@@ -73,8 +73,7 @@ public class EquipmentsController : ControllerBase {
             new { agentId, equipmentId = equipmentFetchDto.id }, equipmentFetchDto);
     }
     
-    private string uploadImageToAzure(Stream imageStream, string connectionString, string containerName, string imageName)
-    {
+    private string uploadImageToAzure(Stream imageStream, string connectionString, string containerName, string imageName) {
         BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
