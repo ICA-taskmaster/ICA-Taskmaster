@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using EquipmentService.AsyncDataServices;
 using EquipmentService.Data;
 using EquipmentService.Events;

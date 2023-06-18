@@ -9,4 +9,6 @@ public class EquipmentPersistDto {
     public string description { get; init; }
     [Required]
     public string status { get; init; }
+    [Required]
+    public IFormFile image { get; init; }
 }

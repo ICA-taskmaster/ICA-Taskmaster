@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Storage.Blobs;
 using EquipmentService.Data;
 using EquipmentService.Dtos;
 using EquipmentService.Models;
@@ -11,9 +12,10 @@ namespace EquipmentService.Controllers;
 public class EquipmentsController : ControllerBase {
     private readonly IEquipmentRespository repository;
     private readonly IMapper mapper;
+    private readonly IConfiguration configuration;
 
-    public EquipmentsController(IEquipmentRespository repository, IMapper mapper) 
-        => (this.repository, this.mapper) = (repository, mapper);
+    public EquipmentsController(IEquipmentRespository repository, IMapper mapper, IConfiguration configuration) 
+        => (this.repository, this.mapper, this.configuration) = (repository, mapper, configuration);
     
     // GET api/c/agents/{agentId}/equipments
     [HttpGet]
@@ -45,13 +47,24 @@ public class EquipmentsController : ControllerBase {
     
     // POST api/c/agents/{agentId}/equipments
     [HttpPost]
-    public ActionResult<EquipmentFetchDto> createEquipmentForAgent(int agentId, EquipmentPersistDto equipmentPersistDto) {
+    public ActionResult<EquipmentFetchDto> createEquipmentForAgent(int agentId, [FromForm] EquipmentPersistDto equipmentPersistDto) {
         Console.WriteLine($"--> Creating equipment for agent id [{agentId}] from equipment service");
-       
+        
         if (!repository.agentExists(agentId))
             return NotFound();
 
         var equipment = mapper.Map<Equipment>(equipmentPersistDto);
+
+        if (equipmentPersistDto.image != null) {
+            Console.WriteLine("--> Uploading image to Azure Blob Storage");
+            string connectionString = configuration["ConnectionStrings:StorageConnection"];
+            string containerName = configuration["storageContainerName"];
+            string imageName = Guid.NewGuid().ToString(); 
+            var imageUrl = uploadImageToAzure(equipmentPersistDto.image.OpenReadStream(), connectionString, containerName, imageName); // Declare the imageUrl variable
+            
+            equipment.imageUrl = imageUrl; // Set the image URL in the equipment object
+        }
+
         repository.create(agentId, equipment);
         repository.saveChanges();
         
@@ -59,4 +72,16 @@ public class EquipmentsController : ControllerBase {
         return CreatedAtRoute(nameof(getEquipmentForAgent), 
             new { agentId, equipmentId = equipmentFetchDto.id }, equipmentFetchDto);
     }
+    
+    private string uploadImageToAzure(Stream imageStream, string connectionString, string containerName, string imageName)
+    {
+        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+        BlobClient blobClient = containerClient.GetBlobClient(imageName);
+        blobClient.Upload(imageStream, true);
+
+        return blobClient.Uri.ToString();
+    }
+
 }
