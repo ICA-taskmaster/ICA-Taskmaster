@@ -3,8 +3,10 @@ using AgentService.Data;
 using AgentService.Dtos;
 using AgentService.Models;
 using AgentService.SyncDataServices.Http;
+using AgentService.Validation;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Security.Application;
 
 namespace AgentService.Controllers;
 
@@ -60,8 +62,18 @@ public class AgentsController : ControllerBase {
     [HttpPost]
     public async Task<ActionResult<AgentFetchDto>> createAgent(AgentPersistDto agentPersistDto) {
         logger.LogInformation("Creating agent...");
-
         var agent = mapper.Map<Agent>(agentPersistDto);
+        bool isValidAgent = InputValidator.validateAgent(agent);
+        
+        if (!isValidAgent) {
+            logger.LogWarning("Invalid agent");
+            return BadRequest();
+        }
+        
+        agent.realName = Encoder.HtmlEncode(agent.realName);
+        agent.codeName = Encoder.HtmlEncode(agent.codeName);
+        agent.burnerPhone = Encoder.HtmlEncode(agent.burnerPhone);
+
         repository.create(agent);
         repository.saveChanges();
 
