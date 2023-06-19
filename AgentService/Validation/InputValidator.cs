@@ -21,6 +21,6 @@ public abstract class InputValidator {
     
     private static bool isValidPhoneNumber(string phoneNumber) {
         const string phoneRegex = @"^\d{10}$";
-        return Regex.IsMatch(phoneNumber, phoneRegex);
+        return Regex.IsMatch(phoneNumber, phoneRegex, RegexOptions.None, TimeSpan.FromMilliseconds(100));
     }
 }
