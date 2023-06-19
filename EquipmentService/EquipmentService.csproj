@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!-- Project is not a test project -->
-    <SonarCloudTestProject>false</SonarCloudTestProject>
+    <!-- Mark the project as being a test project -->
+    <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
 </Project>
