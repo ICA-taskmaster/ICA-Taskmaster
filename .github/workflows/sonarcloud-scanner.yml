@@ -42,6 +42,7 @@ jobs:
         run: |
           mkdir .\.sonar\scanner
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          dotnet tool install --global dotnet-coverage
 
       - name: Build and analyze
         env:
