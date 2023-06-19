@@ -7,9 +7,10 @@ namespace AgentService.SyncDataServices.Http;
 public class HttpEquipmentDataClient : IEquipmentDataClient {
     private readonly HttpClient httpClient;
     private readonly IConfiguration configuration;
+    private readonly ILogger<HttpEquipmentDataClient> logger;
 
-    public HttpEquipmentDataClient(HttpClient httpClient, IConfiguration configuration) =>
-    (this.httpClient, this.configuration) = (httpClient, configuration);
+    public HttpEquipmentDataClient(HttpClient httpClient, IConfiguration configuration, ILogger<HttpEquipmentDataClient> logger) =>
+    (this.httpClient, this.configuration, this.logger) = (httpClient, configuration, logger);
     
     public async Task sendAgentsToEquipmentService(AgentFetchDto agents) {
         var httpContent = new StringContent(
@@ -18,8 +19,12 @@ public class HttpEquipmentDataClient : IEquipmentDataClient {
             "application/json"
         );
         var response = await httpClient.PostAsync($"{configuration["EquipmentService:Url"]}/api/c/agents/", httpContent);
-        Console.WriteLine(response.IsSuccessStatusCode
-            ? "--> Sync POST to EquipmentService was OK!"
-            : "--> Sync POST to EquipmentService was NOT OK!");
+
+        if (response.IsSuccessStatusCode) {
+            logger.LogInformation("Sync POST to EquipmentService was OK!");
+        } else {
+            logger.LogError("Sync POST to EquipmentService was NOT OK!");
+        }
+        
     }
 }

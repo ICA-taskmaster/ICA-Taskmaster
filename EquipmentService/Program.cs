@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using EquipmentService.AsyncDataServices;
 using EquipmentService.Data;
 using EquipmentService.Events;
@@ -28,8 +29,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

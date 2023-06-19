@@ -12,7 +12,4 @@ public class Agent {
     public string codeName { get; set; }
     public string burnerPhone { get; set; }
     public string securityClearance { get; set; }
-    /*public List<Passport> passports { get; set; }
-    public List<Skill> Skills { get; set; }
-    public List<Equipment> Equipments { get; set; }*/
 } 

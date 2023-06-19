@@ -9,10 +9,13 @@ public class MessageBusClient : IMessageBusClient {
     private readonly IConfiguration configuration;
     private readonly IConnection connection;
     private readonly IModel channel;
+    private readonly ILogger<MessageBusClient> logger;
 
-    public MessageBusClient(IConfiguration configuration) {
+    public MessageBusClient(IConfiguration configuration, ILogger<MessageBusClient> logger) {
         this.configuration = configuration;
-        var factory = new ConnectionFactory() {
+        this.logger = logger;
+        
+        var factory = new ConnectionFactory {
             HostName = configuration["RabbitMQHost"],
             Port = int.Parse(configuration["RabbitMQPort"])
         };
@@ -25,19 +28,19 @@ public class MessageBusClient : IMessageBusClient {
             
             connection.ConnectionShutdown += rabbitMQ_ConnectionShutdown;
             
-            Console.WriteLine("--> Connected to Message Bus");
+            logger.LogInformation("Connected to Message Bus");
         } catch (Exception e) {
-            Console.WriteLine($"--> Could not connect to Message Bus: {e.Message}");
+            logger.LogWarning("Could not connect to Message Bus: {EMessage}", e.Message);
         }
     }
     
     public void publishNewAgent(AgentPublishDto agentPublishDto) {
         var message = JsonSerializer.Serialize(agentPublishDto);
         if (connection.IsOpen) {
-            Console.WriteLine("--> RabbitMQ Connection Open, sending message...");
+            logger.LogInformation("RabbitMQ Connection Open, sending message...");
             sendMessage(message);
         } else {
-            Console.WriteLine("--> RabbitMQ Connection Closed, not sending");
+            logger.LogWarning("RabbitMQ Connection Closed, not sending");
         }
     }
 
@@ -49,17 +52,17 @@ public class MessageBusClient : IMessageBusClient {
             basicProperties: null,
             body: body
         );
-        Console.WriteLine($"--> Message published: {message}");
+        logger.LogInformation("Message published: {Message}", message);
     }
     
     public void dispose() {
-        Console.WriteLine("MessageBus Disposed");
+        logger.LogInformation("MessageBus Disposing");
         if (!channel.IsOpen) return;
         channel.Close();
         connection.Close();
     }
 
-    private static void rabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e) {
-        Console.WriteLine("--> RabbitMQ Connection Shutdown");
+    private void rabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e) {
+        logger.LogCritical("RabbitMQ Connection Shutdown");
     }
 }
