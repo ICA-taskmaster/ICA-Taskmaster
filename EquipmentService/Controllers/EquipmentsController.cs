@@ -73,7 +73,7 @@ public class EquipmentsController : ControllerBase {
             new { agentId, equipmentId = equipmentFetchDto.id }, equipmentFetchDto);
     }
     
-    private string uploadImageToAzure(Stream imageStream, string connectionString, string containerName, string imageName) {
+    private static string uploadImageToAzure(Stream imageStream, string connectionString, string containerName, string imageName) {
         BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
