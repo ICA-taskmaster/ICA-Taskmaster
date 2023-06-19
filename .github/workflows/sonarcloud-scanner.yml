@@ -42,7 +42,6 @@ jobs:
         run: |
           mkdir .\.sonar\scanner
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-          dotnet tool install --global dotnet-coverage
 
       - name: Build and analyze
         env:
@@ -52,6 +51,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"ICA-taskmaster_ICA-Taskmaster" /o:"ica-taskmaster" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
           dotnet build AgentService/AgentService.csproj
           dotnet build EquipmentService/EquipmentService.csproj
+          dotnet tool install --global dotnet-coverage
           dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         
