@@ -1,0 +1,10 @@
+2023-06-19 22:44:35.890 +02:00 [INF] Starting web host
+2023-06-19 22:44:35.924 +02:00 [INF] --> In Development
+2023-06-19 22:44:36.051 +02:00 [INF] Equipment Service Endpoint: http://localhost:6000/api/c/agents/
+2023-06-19 22:44:36.586 +02:00 [INF] Seeding data...
+2023-06-19 22:44:36.664 +02:00 [INF] Data seeding completed
+2023-06-19 22:45:44.236 +02:00 [INF] Starting web host
+2023-06-19 22:45:44.268 +02:00 [INF] --> In Development
+2023-06-19 22:45:44.397 +02:00 [INF] Equipment Service Endpoint: http://localhost:6000/api/c/agents/
+2023-06-19 22:45:44.921 +02:00 [INF] Seeding data...
+2023-06-19 22:45:44.999 +02:00 [INF] Data seeding completed
