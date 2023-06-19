@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace AgentService.Tests;
 
 [TestFixture]
-public class TestAgent
+public class AgentsRepositoryTests
 {
     private AppDbContext context;
 
