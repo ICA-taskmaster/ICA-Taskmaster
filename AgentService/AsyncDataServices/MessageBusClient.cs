@@ -6,13 +6,11 @@ using RabbitMQ.Client;
 namespace AgentService.AsyncDataServices;
 
 public class MessageBusClient : IMessageBusClient {
-    private readonly IConfiguration configuration;
     private readonly IConnection connection;
     private readonly IModel channel;
     private readonly ILogger<MessageBusClient> logger;
 
     public MessageBusClient(IConfiguration configuration, ILogger<MessageBusClient> logger) {
-        this.configuration = configuration;
         this.logger = logger;
         
         var factory = new ConnectionFactory {
