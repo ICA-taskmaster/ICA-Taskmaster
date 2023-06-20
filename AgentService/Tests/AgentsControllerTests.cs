@@ -65,8 +65,7 @@ public class AgentsControllerTests {
     }
 
     [Test]
-    public void GetAgentById_ExistingId_ReturnsOkResultWithAgentFetchDto()
-    {
+    public void GetAgentById_ExistingId_ReturnsOkResultWithAgentFetchDto() {
         // Arrange
         var agentId = 1;
         var agent = new Agent { id = 1, realName = "47", codeName = "Agent 47", burnerPhone = "06336046925", securityClearance = "Orange" };
@@ -87,8 +86,7 @@ public class AgentsControllerTests {
     }
 
     [Test]
-    public void GetAgentById_NonExistingId_ReturnsNotFoundResult()
-    {
+    public void GetAgentById_NonExistingId_ReturnsNotFoundResult() {
         // Arrange
         var nonExistingAgentId = 100;
         repositoryMock.Setup(repo => repo.getById(nonExistingAgentId)).Returns((Agent)null);
@@ -99,4 +97,23 @@ public class AgentsControllerTests {
         // Assert
         Assert.That(result.Result, Is.InstanceOf<NotFoundResult>());
     }
+    
+    [Test]
+    public void CreateAgent_ValidAgent_ReturnsCreatedResultWithAgentFetchDto() {
+        // Arrange
+        var agentToCreate = new AgentPersistDto { RealName = "47", CodeName = "Agent 47", BurnerPhone = "06336046925", SecurityClearance = "Orange" };
+        var agent = new Agent { id = 1, realName = "47", codeName = "Agent 47", burnerPhone = "06336046925", securityClearance = "Orange" };
+        var agentFetchDto = new AgentFetchDto(1, "47", "Agent 47", "06336046925", "Orange");
+
+        mapperMock.Setup(mapper => mapper.Map<Agent>(agentToCreate)).Returns(agent);
+        repositoryMock.Setup(repo => repo.create(agent)).Returns(agent);
+        mapperMock.Setup(mapper => mapper.Map<AgentFetchDto>(agent)).Returns(agentFetchDto);
+
+        // Act
+        var result = controller.createAgent(agentToCreate);
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<ActionResult<AgentFetchDto>>());
+    }
+
 }

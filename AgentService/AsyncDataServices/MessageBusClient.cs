@@ -10,7 +10,7 @@ public class MessageBusClient : IMessageBusClient {
     private readonly IModel channel;
     private readonly ILogger<MessageBusClient> logger;
 
-    public MessageBusClient(IConfiguration configuration, ILogger<MessageBusClient> logger) {
+    public MessageBusClient(IConfiguration configuration, ILogger<MessageBusClient> logger, IConnectionFactory connectionFactory) {
         this.logger = logger;
         
         var factory = new ConnectionFactory {
