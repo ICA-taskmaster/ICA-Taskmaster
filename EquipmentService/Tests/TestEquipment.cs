@@ -11,6 +11,24 @@ namespace EquipmentService.Tests;
 
 [TestFixture]
 public class TestEquipment {
+    private EquipmentsController controller;
+    private Mock<IEquipmentRespository> repositoryMock;
+    private Mock<IMapper> mapperMock;
+    private Mock<IConfiguration> configurationMock;
+    
+    [SetUp]
+    public void Setup() {
+        repositoryMock = new Mock<IEquipmentRespository>();
+        mapperMock = new Mock<IMapper>();
+        configurationMock = new Mock<IConfiguration>();
+        
+        controller = new EquipmentsController(
+            repositoryMock.Object, 
+            mapperMock.Object, 
+            configurationMock.Object
+        );
+    }
+    
     [Test]
     public void getEquipmentsForAgent_ReturnsOkResult() {
         // Arrange
@@ -31,11 +49,7 @@ public class TestEquipment {
                 agentId = 7
             }
         };
-        var repositoryMock = new Mock<IEquipmentRespository>();
-        var mapperMock = new Mock<IMapper>();
-        var configurationMock = new Mock<IConfiguration>();
-        var controller = new EquipmentsController(repositoryMock.Object, mapperMock.Object, configurationMock.Object);
-
+        
         // Map the fakeEquipments list to EquipmentFetchDto
         var mappedEquipments  = new List<EquipmentFetchDto> {
             new (1, "ICA19 Silverballer", "The Silverballer is a semi-automatic pistol...", "Factory new", "some-url", 7),
@@ -55,9 +69,8 @@ public class TestEquipment {
 
         var okResult = (OkObjectResult)result.Result;
         var equipmentList = (IEnumerable<EquipmentFetchDto>)okResult?.Value;
-        var equipmentFetchDtos = equipmentList as EquipmentFetchDto[] ?? equipmentList?.ToArray();
-        Assert.That(equipmentFetchDtos?.Length, Is.EqualTo(2));
-        Console.WriteLine($"--> {equipmentFetchDtos.Length} equipments returned");
+        var equipmentFetchDtos = equipmentList?.ToArray() ?? Array.Empty<EquipmentFetchDto>();
+        Assert.That(equipmentFetchDtos.Length, Is.EqualTo(2));
     }
     
     // Add more test methods for other controller methods
