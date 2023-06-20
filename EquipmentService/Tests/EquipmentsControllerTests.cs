@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace EquipmentService.Tests;
 
 [TestFixture]
-public class TestEquipment {
+public class EquipmentsControllerTests {
     private EquipmentsController controller;
     private Mock<IEquipmentRespository> repositoryMock;
     private Mock<IMapper> mapperMock;
@@ -73,5 +73,18 @@ public class TestEquipment {
         Assert.That(equipmentFetchDtos.Length, Is.EqualTo(2));
     }
     
-    // Add more test methods for other controller methods
+    [Test]
+    public void getEquipmentsForAgent_ReturnsNotFoundResult() {
+        // Arrange
+        const int agentId = 7;
+        // Mock the repository behavior
+        repositoryMock.Setup(repo => repo.agentExists(agentId)).Returns(false);
+
+        // Act
+        var result = controller.getEquipmentsForAgent(agentId);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<ActionResult<IEnumerable<EquipmentFetchDto>>>());
+        Assert.That(result.Result, Is.InstanceOf<NotFoundResult>());
+    }
 }

@@ -82,5 +82,4 @@ public class EquipmentsController : ControllerBase {
 
         return blobClient.Uri.ToString();
     }
-
 }
